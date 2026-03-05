@@ -1,0 +1,82 @@
+/* Logo da marca: MEU / MEI / PRO — identidade em 3 linhas, bold, alto contraste */
+
+.logo-marca {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--leading-tight);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  background: #ffffff;
+  padding: 0.5em;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: transform var(--transition-spring), box-shadow var(--transition-smooth);
+  aspect-ratio: 1;
+}
+
+.logo-marca:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: scale(1.02);
+}
+
+.logo-marca .logo-line {
+  display: block;
+  white-space: nowrap;
+}
+
+/* Tamanhos — formato quadrado (aspect-ratio: 1) */
+.logo-compact {
+  font-size: 0.7rem;
+  width: 2.75rem;
+  min-width: 2.75rem;
+  height: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.25em;
+  border-radius: 6px;
+}
+
+.logo-compact .logo-line {
+  letter-spacing: var(--tracking-wide);
+}
+
+.logo-medium {
+  font-size: var(--font-size-base);
+  width: 3.25rem;
+  min-width: 3.25rem;
+  height: 3.25rem;
+  min-height: 3.25rem;
+  padding: 0.4em;
+  border-radius: 8px;
+}
+
+.logo-large {
+  font-size: var(--font-size-2xl);
+  width: 4.5rem;
+  min-width: 4.5rem;
+  height: 4.5rem;
+  min-height: 4.5rem;
+  padding: 0.45em;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logo-large:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Variante clara: texto branco, sem caixa (para fundos escuros) */
+.logo-marca.logo-light {
+  color: #ffffff;
+  background: transparent;
+  box-shadow: none;
+}
+
+.logo-marca.logo-light:hover {
+  box-shadow: none;
+  filter: brightness(1.1);
+}

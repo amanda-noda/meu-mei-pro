@@ -1,0 +1,238 @@
+.cadastro-page {
+  padding: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+}
+
+.cadastro-form h3 {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.35rem;
+  display: inline-block;
+  transition: opacity var(--transition-fast);
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cadastro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 700px) {
+  .cadastro-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cadastro-categorias {
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.35rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: box-shadow var(--transition-smooth), border-color var(--transition-fast);
+}
+
+.cadastro-categorias:hover {
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.3);
+  border-color: rgba(233, 30, 140, 0.15);
+}
+
+.grupo-categoria {
+  margin-bottom: 1.1rem;
+}
+
+.grupo-categoria:last-of-type {
+  margin-bottom: 0;
+}
+
+.grupo-categoria h4 {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-wider);
+  color: var(--text-muted);
+  margin: 0 0 0.5rem 0;
+}
+
+.grupo-categoria ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.grupo-categoria li {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 0.3rem;
+  color: var(--text);
+  transition: all var(--transition-fast);
+}
+
+.grupo-categoria li:hover {
+  border-color: rgba(233, 30, 140, 0.3);
+  background: rgba(233, 30, 140, 0.05);
+  transform: translateX(4px);
+}
+
+.cadastro-campos {
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.35rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: box-shadow var(--transition-smooth), border-color var(--transition-fast);
+}
+
+.cadastro-campos:hover {
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.3);
+  border-color: rgba(233, 30, 140, 0.15);
+}
+
+.cadastro-campos .campo {
+  margin-bottom: 1.1rem;
+}
+
+.cadastro-campos label {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  display: block;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+  transition: color var(--transition-fast);
+}
+
+.cadastro-campos input[type="text"],
+.cadastro-campos input[type="date"],
+.cadastro-campos select {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.cadastro-campos input[type="text"]:focus,
+.cadastro-campos input[type="date"]:focus,
+.cadastro-campos select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.cadastro-campos input[type="text"]:hover,
+.cadastro-campos input[type="date"]:hover,
+.cadastro-campos select:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.tipo-opcoes,
+.status-opcoes {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.opcao {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.4rem 0;
+  border-radius: 8px;
+  transition: transform var(--transition-spring), opacity var(--transition-fast);
+}
+
+.opcao:hover {
+  transform: scale(1.03);
+}
+
+.opcao:active {
+  transform: scale(0.99);
+}
+
+.opcao input {
+  accent-color: var(--accent);
+  width: 1.1em;
+  height: 1.1em;
+  cursor: pointer;
+}
+
+.opcao-r {
+  font-weight: var(--font-weight-semibold);
+  color: var(--success);
+}
+
+.opcao-d {
+  font-weight: var(--font-weight-semibold);
+  color: var(--danger);
+}
+
+.status-pago {
+  color: var(--text);
+}
+
+.status-pendente {
+  font-weight: var(--font-weight-semibold);
+  color: var(--danger);
+}
+
+.mensagem {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  animation: fadeSlideUp 0.35s var(--ease-out-expo) forwards;
+}
+
+.mensagem.sucesso {
+  background: rgba(76, 175, 80, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.mensagem.erro {
+  background: rgba(244, 67, 54, 0.15);
+  color: var(--danger);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.btn-cadastrar {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #e91e8c 0%, #ad1d6e 100%);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px var(--accent-glow);
+  transition: all var(--transition-smooth);
+}
+
+.btn-cadastrar:hover {
+  box-shadow: 0 6px 24px var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.btn-cadastrar:active {
+  transform: translateY(0);
+}
