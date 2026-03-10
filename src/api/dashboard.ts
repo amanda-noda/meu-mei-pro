@@ -36,12 +36,58 @@ export interface MeiProfile {
   razao_social?: string;
 }
 
-/** Valores do DAS MEI 2025 (atualizados) */
+export interface DasInfo {
+  valor: number;
+  label: string;
+  vencimento: number;
+  composicao: { item: string; valor: number }[];
+  exemplos: string;
+}
+
+/** Valores e composição do DAS MEI 2025 (atualizados) */
 export const DAS_MEI_2025 = {
-  comercio: { valor: 76.9, label: "Comércio/Indústria", vencimento: 20 },
-  servicos: { valor: 80.9, label: "Prestação de Serviços", vencimento: 20 },
-  ambos: { valor: 81.9, label: "Comércio + Serviços", vencimento: 20 },
-  transportador: { valor: 185.16, label: "Transportador", vencimento: 20 },
+  comercio: {
+    valor: 76.9,
+    label: "Comércio/Indústria",
+    vencimento: 20,
+    composicao: [
+      { item: "INSS (5% do salário-mínimo)", valor: 75.9 },
+      { item: "ICMS", valor: 1 },
+    ],
+    exemplos: "Venda de produtos, revenda, indústria, lojas, comércio eletrônico.",
+  },
+  servicos: {
+    valor: 80.9,
+    label: "Prestação de Serviços",
+    vencimento: 20,
+    composicao: [
+      { item: "INSS (5% do salário-mínimo)", valor: 75.9 },
+      { item: "ISS", valor: 5 },
+    ],
+    exemplos: "Consultoria, manicure, cabeleireiro, encanador, designer, fotógrafo, personal trainer.",
+  },
+  ambos: {
+    valor: 81.9,
+    label: "Comércio + Serviços",
+    vencimento: 20,
+    composicao: [
+      { item: "INSS (5% do salário-mínimo)", valor: 75.9 },
+      { item: "ICMS", valor: 1 },
+      { item: "ISS", valor: 5 },
+    ],
+    exemplos: "Quem vende produtos e também presta serviços (ex.: salão que vende cosméticos).",
+  },
+  transportador: {
+    valor: 188.16,
+    label: "Transportador",
+    vencimento: 20,
+    composicao: [
+      { item: "INSS (12% do salário-mínimo)", valor: 182.16 },
+      { item: "ICMS", valor: 1 },
+      { item: "ISS", valor: 5 },
+    ],
+    exemplos: "Caminhoneiro, motoboy, Uber, entregador autônomo, transporte de cargas.",
+  },
 } as const;
 
 /** Obrigações do MEI (resumo) */
@@ -278,4 +324,53 @@ export async function addNotaFiscal(
     return null;
   }
   return data as NotaFiscal;
+}
+
+/** Atualiza nome do usuário (user_metadata) */
+export async function updateUserProfile(nome: string): Promise<{
+  ok: boolean;
+  message: string;
+  user?: { id: string; email: string; nome: string };
+}> {
+  if (!supabase) return { ok: false, message: "Supabase não configurado." };
+  const { data, error } = await supabase.auth.updateUser({
+    data: { full_name: nome.trim() },
+  });
+  if (error) return { ok: false, message: error.message };
+  const u = data?.user;
+  if (!u) return { ok: true, message: "Nome atualizado." };
+  return {
+    ok: true,
+    message: "Nome atualizado.",
+    user: {
+      id: u.id,
+      email: u.email ?? "",
+      nome: (u.user_metadata?.full_name as string) || u.email?.split("@")[0] || "Usuário",
+    },
+  };
+}
+
+/** Altera senha do usuário */
+export async function updatePassword(novaSenha: string): Promise<{ ok: boolean; message: string }> {
+  if (!supabase) return { ok: false, message: "Supabase não configurado." };
+  if (novaSenha.length < 6) return { ok: false, message: "A senha deve ter no mínimo 6 caracteres." };
+  const { error } = await supabase.auth.updateUser({ password: novaSenha });
+  if (error) return { ok: false, message: error.message };
+  return { ok: true, message: "Senha alterada." };
+}
+
+/** Atualiza ou cria perfil MEI (atividade para DAS) */
+export async function upsertMeiProfile(
+  userId: string,
+  atividade: MeiProfile["atividade"]
+): Promise<{ ok: boolean; message: string }> {
+  if (!supabase) return { ok: false, message: "Supabase não configurado." };
+  const { error } = await supabase
+    .from("mei_profile")
+    .upsert(
+      { user_id: userId, atividade, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" }
+    );
+  if (error) return { ok: false, message: error.message };
+  return { ok: true, message: "Perfil MEI atualizado." };
 }

@@ -167,16 +167,75 @@ export const DashboardFinanceiro: React.FC<DashboardFinanceiroProps> = ({ userId
   };
 
   return (
-    <div className="dashboard-section">
-      <h2 className="dashboard-section-title">Controle Financeiro</h2>
+    <div className="dashboard-section financeiro-section">
+      <div className="financeiro-header">
+        <span className="financeiro-header-icon" aria-hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 3v18h18" />
+            <path d="M7 14v4" />
+            <path d="M12 10v8" />
+            <path d="M17 6v12" />
+          </svg>
+        </span>
+        <div>
+          <h2 className="dashboard-section-title">Controle Financeiro</h2>
+          <p className="financeiro-subtitle">Painel e lançamentos do seu negócio</p>
+        </div>
+      </div>
+
+      {/* Resumo visual — Receita, Despesa, Saldo */}
+      <div className="financeiro-resumo-cards">
+        <div className="financeiro-resumo-card financeiro-resumo-receita">
+          <span className="financeiro-resumo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+          </span>
+          <span className="financeiro-resumo-label">Receita Total</span>
+          <span className="financeiro-resumo-valor">{loading ? "..." : formatBrl(painel.totalReceita)}</span>
+        </div>
+        <div className="financeiro-resumo-card financeiro-resumo-despesa">
+          <span className="financeiro-resumo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="16" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+            </svg>
+          </span>
+          <span className="financeiro-resumo-label">Despesas</span>
+          <span className="financeiro-resumo-valor">{loading ? "..." : formatBrl(painel.totalDespesas)}</span>
+        </div>
+        <div className={`financeiro-resumo-card financeiro-resumo-saldo ${painel.saldo >= 0 ? "saldo-positivo" : "saldo-negativo"}`}>
+          <span className="financeiro-resumo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+          </span>
+          <span className="financeiro-resumo-label">Saldo</span>
+          <span className="financeiro-resumo-valor">{loading ? "..." : formatBrl(painel.saldo)}</span>
+        </div>
+      </div>
 
       {/* Painel Financeiro - 12 meses derivado dos lançamentos */}
-      <div className="pricing-block">
-        <h3 className="pricing-block-title">Painel Financeiro</h3>
-        <p className="pricing-meta">
-          Valores agregados por plano de contas e mês, derivados dos lançamentos.
-        </p>
-        <div className="pricing-card pricing-card-wide">
+      <div className="pricing-block financeiro-block">
+        <div className="financeiro-block-header">
+          <span className="financeiro-block-icon" aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </span>
+          <div>
+            <h3 className="pricing-block-title">Painel Financeiro</h3>
+            <p className="pricing-meta">
+              Valores agregados por plano de contas e mês, derivados dos lançamentos.
+            </p>
+          </div>
+        </div>
+        <div className="pricing-card pricing-card-wide financeiro-panel-card">
           <div className="financial-table-wrap">
             <table className="pricing-table financial-panel-table">
               <thead>
@@ -295,9 +354,25 @@ export const DashboardFinanceiro: React.FC<DashboardFinanceiroProps> = ({ userId
       </div>
 
       {/* Lançamentos - CRUD Supabase */}
-      <div className="pricing-block">
-        <h3 className="pricing-block-title">Lançamentos</h3>
-        <div className="pricing-card pricing-card-wide">
+      <div className="pricing-block financeiro-block">
+        <div className="financeiro-block-header">
+          <span className="financeiro-block-icon" aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+          </span>
+          <div>
+            <h3 className="pricing-block-title">Lançamentos</h3>
+            <p className="pricing-meta">
+              Registre receitas e despesas. Edite diretamente na tabela e exclua quando necessário.
+            </p>
+          </div>
+        </div>
+        <div className="pricing-card pricing-card-wide financeiro-lancamentos-card">
           <div className="lancamentos-actions">
             <button
               type="button"
@@ -475,7 +550,18 @@ export const DashboardFinanceiro: React.FC<DashboardFinanceiroProps> = ({ userId
             </div>
           )}
           {!loading && lancamentos.length === 0 && (
-            <p className="pricing-meta">Nenhum lançamento. Clique em &quot;Adicionar lançamento&quot; para começar.</p>
+            <div className="financeiro-empty">
+              <span className="financeiro-empty-icon" aria-hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="12" y1="18" x2="12" y2="12" />
+                  <line x1="9" y1="15" x2="15" y2="15" />
+                </svg>
+              </span>
+              <p>Nenhum lançamento ainda</p>
+              <p className="financeiro-empty-hint">Clique em &quot;Adicionar lançamento&quot; para começar a registrar receitas e despesas.</p>
+            </div>
           )}
         </div>
       </div>

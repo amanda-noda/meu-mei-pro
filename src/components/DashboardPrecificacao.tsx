@@ -142,18 +142,67 @@ export const DashboardPrecificacao: React.FC = () => {
   ]);
 
   return (
-    <div className="dashboard-section">
-      <h2 className="dashboard-section-title">Precificação</h2>
-      <p className="pricing-meta pricing-meta-spaced">
-        Calcule o preço de venda e a composição dos custos para manter margem e lucro sob controle.
-      </p>
+    <div className="dashboard-section precificacao-section">
+      <div className="precificacao-header">
+        <span className="precificacao-header-icon" aria-hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+        </span>
+        <div>
+          <h2 className="dashboard-section-title">Precificação</h2>
+          <p className="precificacao-subtitle">
+            Calcule o preço de venda e a composição dos custos para manter margem e lucro sob controle.
+          </p>
+        </div>
+      </div>
+
+      {/* Resumo visual — Produtos e Serviços */}
+      <div className="precificacao-resumo-cards">
+        <div className="precificacao-resumo-card precificacao-resumo-produto">
+          <span className="precificacao-resumo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+              <line x1="12" y1="22.08" x2="12" y2="12" />
+            </svg>
+          </span>
+          <span className="precificacao-resumo-label">Preço do produto</span>
+          <span className="precificacao-resumo-valor">{formatBrl(precoCalculado)}</span>
+          <span className="precificacao-resumo-hint">Margem {deducoesProduto.margemPct.toFixed(0)}%</span>
+        </div>
+        <div className="precificacao-resumo-card precificacao-resumo-servico">
+          <span className="precificacao-resumo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </span>
+          <span className="precificacao-resumo-label">Preço por serviço</span>
+          <span className="precificacao-resumo-valor">{formatBrl(custosServicos.precoPorServico)}</span>
+          <span className="precificacao-resumo-hint">{quantidadeServicosEfetivos} serviços/mês</span>
+        </div>
+      </div>
 
       {/* Precificação de Produtos */}
-      <div className="pricing-block">
-        <h3 className="pricing-block-title">Precificação de Produtos</h3>
+      <div className="pricing-block precificacao-block">
+        <div className="precificacao-block-header">
+          <span className="precificacao-block-icon" aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+              <line x1="12" y1="22.08" x2="12" y2="12" />
+            </svg>
+          </span>
+          <div>
+            <h3 className="pricing-block-title">Precificação de Produtos</h3>
+            <p className="pricing-meta">Custo, markup e composição de deduções por item.</p>
+          </div>
+        </div>
 
         <div className="pricing-grid">
-          <div className="pricing-card">
+          <div className="pricing-card precificacao-card precificacao-card-produto">
+            <div className="precificacao-card-accent" />
             <h4 className="pricing-card-title">Cálculo do preço por produto</h4>
             <table className="pricing-table">
               <tbody>
@@ -199,7 +248,8 @@ export const DashboardPrecificacao: React.FC = () => {
             </table>
           </div>
 
-          <div className="pricing-card">
+          <div className="pricing-card precificacao-card precificacao-card-produto">
+            <div className="precificacao-card-accent" />
             <h4 className="pricing-card-title">Composição do preço por produto</h4>
             <table className="pricing-table">
               <tbody>
@@ -352,11 +402,23 @@ export const DashboardPrecificacao: React.FC = () => {
       </div>
 
       {/* Precificação de Serviços */}
-      <div className="pricing-block">
-        <h3 className="pricing-block-title">Precificação de Serviços</h3>
+      <div className="pricing-block precificacao-block precificacao-block-servico">
+        <div className="precificacao-block-header">
+          <span className="precificacao-block-icon" aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </span>
+          <div>
+            <h3 className="pricing-block-title">Precificação de Serviços</h3>
+            <p className="pricing-meta">Capacidade, custos fixos e preço por atendimento.</p>
+          </div>
+        </div>
 
         <div className="pricing-grid">
-          <div className="pricing-card">
+          <div className="pricing-card precificacao-card precificacao-card-servico">
+            <div className="precificacao-card-accent" />
             <h4 className="pricing-card-title">Cálculo da capacidade de produção</h4>
             <table className="pricing-table">
               <tbody>
@@ -409,7 +471,8 @@ export const DashboardPrecificacao: React.FC = () => {
             </table>
           </div>
 
-          <div className="pricing-card pricing-card-wide">
+          <div className="pricing-card pricing-card-wide precificacao-card precificacao-card-servico">
+            <div className="precificacao-card-accent" />
             <h4 className="pricing-card-title">Composição do preço por serviço</h4>
             <p className="pricing-meta">
               Quantidade de serviços efetivos no mês:{" "}

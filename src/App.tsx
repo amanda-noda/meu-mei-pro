@@ -469,7 +469,7 @@ export const App: React.FC = () => {
   };
 
   if (user) {
-    return <Dashboard user={user} onLogout={handleLogout} />;
+    return <Dashboard user={user} onLogout={handleLogout} onProfileUpdate={setUser} />;
   }
 
   return (
@@ -512,12 +512,22 @@ export const App: React.FC = () => {
       </header>
 
       <main>
-        {/* Hero principal inspirado na página dos AirPods */}
+        {/* Hero principal */}
         <section className="hero" id="inicio">
+          <div className="hero-bg">
+            <div className="hero-bg-gradient" />
+            <div className="hero-bg-glow hero-bg-glow-1" />
+            <div className="hero-bg-glow hero-bg-glow-2" />
+          </div>
           <div className="shell hero-grid">
             <div className="hero-copy">
-              <p className="eyebrow">Plataforma para MEI totalmente digital</p>
-              <h1>Organize seu MEI com experiência de nível Pro.</h1>
+              <div className="hero-eyebrow">
+                <span className="hero-eyebrow-dot" />
+                <span>Plataforma para MEI totalmente digital</span>
+              </div>
+              <h1>
+                Organize seu MEI com experiência de <span className="hero-highlight">nível Pro</span>.
+              </h1>
               <p className="hero-subtitle">
                 Centralize boletos, impostos, notas fiscais e relatórios em um
                 painel elegante, fluido e pensado para o dia a dia de quem
@@ -526,18 +536,22 @@ export const App: React.FC = () => {
               <div className="hero-actions">
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-primary hero-cta-main"
                   onClick={() => setShowSignupModal(true)}
                 >
-                  Criar meu controle de MEI
+                  <span>Criar meu controle de MEI</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
                 </button>
-                <a href="#recursos" className="btn btn-ghost">
+                <a href="#recursos" className="btn btn-ghost hero-cta-secondary">
                   Ver recursos
                 </a>
               </div>
-              <p className="hero-footnote">
+              <div className="hero-footnote">
+                <span className="hero-footnote-icon">✓</span>
                 Teste grátis por 7 dias. Sem cartão de crédito.
-              </p>
+              </div>
             </div>
 
             <div className="hero-visual">
@@ -546,6 +560,7 @@ export const App: React.FC = () => {
                 <div className="hero-orbit-ring hero-orbit-ring-md" />
                 <div className="hero-orbit-ring hero-orbit-ring-sm" />
                 <div className="hero-card hero-card-main">
+                  <div className="hero-card-accent" />
                   <div className="hero-card-header">
                     <span className="pill pill-green">Saudável</span>
                     <span className="hero-card-title">Resumo do seu MEI</span>
@@ -560,9 +575,7 @@ export const App: React.FC = () => {
                     </div>
                     <div className="metric-row">
                       <div>
-                        <span className="metric-label">
-                          DAS e obrigações
-                        </span>
+                        <span className="metric-label">DAS e obrigações</span>
                         <span className="metric-value">Tudo em dia</span>
                       </div>
                       <span className="metric-pill">Próximo em 05 dias</span>
@@ -575,16 +588,26 @@ export const App: React.FC = () => {
                   </div>
                 </div>
                 <div className="hero-card hero-card-float hero-card-left">
+                  <span className="hero-float-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                  </span>
                   <p className="hero-float-label">Alertas inteligentes</p>
-                  <p className="hero-float-value">
-                    Lembramos você de cada prazo importante.
-                  </p>
+                  <p className="hero-float-value">Lembramos você de cada prazo importante.</p>
                 </div>
                 <div className="hero-card hero-card-float hero-card-right">
+                  <span className="hero-float-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 3v18h18" />
+                      <path d="M7 14v4" />
+                      <path d="M12 10v8" />
+                      <path d="M17 6v12" />
+                    </svg>
+                  </span>
                   <p className="hero-float-label">Fluxo de caixa</p>
-                  <p className="hero-float-value">
-                    Veja entradas e saídas em tempo real.
-                  </p>
+                  <p className="hero-float-value">Veja entradas e saídas em tempo real.</p>
                 </div>
               </div>
             </div>
@@ -652,7 +675,13 @@ export const App: React.FC = () => {
                 </ul>
               </article>
 
-              <article className="plan-card plan-card-highlight">
+              <article
+                className="plan-card plan-card-highlight plan-card-clickable"
+                role="button"
+                tabIndex={0}
+                onClick={() => setShowSignupModal(true)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setShowSignupModal(true); } }}
+              >
                 <p className="plan-tag">Pro</p>
                 <h3>Experiência completa Meu MEI Pro</h3>
                 <p className="plan-price">R$ 29/mês</p>
@@ -720,7 +749,13 @@ export const App: React.FC = () => {
                 cálculos.
               </p>
               <p className="benefit-badge">
-                <span className="pill pill-green">Incluído no plano Pro</span>
+                <button
+                  type="button"
+                  className="pill pill-green pill-link"
+                  onClick={() => setShowSignupModal(true)}
+                >
+                  Incluído no plano Pro
+                </button>
               </p>
             </div>
 
@@ -1156,19 +1191,6 @@ export const App: React.FC = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
-            </div>
-
-            {/* Controle Financeiro — Benefício Pro */}
-            <div className="pricing-block" id="controle-financeiro">
-              <h3 className="pricing-block-title">Controle Financeiro</h3>
-              <p className="pricing-meta pricing-meta-spaced">
-                Acesso a Lançamentos, Painel Financeiro e Cadastro de Receitas e Despesas.
-              </p>
-              <div className="benefit-buttons">
-                <span className="benefit-btn">Lançamentos</span>
-                <span className="benefit-btn">Painel Finanças</span>
-                <span className="benefit-btn">Cadastro Receitas e Despesas</span>
               </div>
             </div>
 

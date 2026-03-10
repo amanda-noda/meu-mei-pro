@@ -11,6 +11,7 @@ import {
 } from "../api/dashboard";
 import { DashboardFinanceiro } from "./DashboardFinanceiro";
 import { DashboardPrecificacao } from "./DashboardPrecificacao";
+import { DashboardConfiguracoes } from "./DashboardConfiguracoes";
 
 export type DashboardSection = "resumo" | "financeiro" | "precificacao" | "configuracoes";
 
@@ -30,12 +31,27 @@ function mesAtual(): string {
   return nomes[m];
 }
 
+function formatDataBr(data: string): string {
+  if (!data) return "—";
+  const d = new Date(data);
+  if (Number.isNaN(d.getTime())) return data;
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function saudacaoPorHorario(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
 interface DashboardProps {
   user: AppUser;
   onLogout: () => void;
+  onProfileUpdate?: (user: AppUser) => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, onProfileUpdate }) => {
   const [activeSection, setActiveSection] = useState<DashboardSection>("resumo");
   const [faturamento, setFaturamento] = useState<number>(0);
   const [dasInfo, setDasInfo] = useState<{ valor: number; label: string; vencimento: string; status: string; obrigacoes: { id: string; nome: string; periodicidade: string; vencimento: string }[] } | null>(null);
@@ -155,11 +171,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               </button>
             </nav>
             <div className="header-user">
-              <span className="header-greeting">Olá, {user.nome}</span>
+              <span className="header-user-avatar" aria-hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </span>
+              <div className="header-user-info">
+                <span className="header-greeting">{saudacaoPorHorario()},</span>
+                <span className="header-user-name">{user.nome}</span>
+              </div>
               <button
                 type="button"
                 className="btn btn-ghost btn-sm header-logout"
                 onClick={onLogout}
+                title="Sair da conta"
               >
                 Sair
               </button>
@@ -171,146 +197,248 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       <main className="dashboard-main">
         <div className="shell">
           <section className="dashboard-welcome">
-            <h1>Bem-vindo(a), {user.nome}</h1>
-            <p className="dashboard-subtitle">
-              Acompanhe o resumo do seu MEI: faturamento, DAS e notas fiscais.
-            </p>
+            <div className="dashboard-welcome-card">
+              <div className="dashboard-welcome-glow" />
+              <div className="dashboard-welcome-content">
+                <span className="dashboard-welcome-saudacao">{saudacaoPorHorario()},</span>
+                <h1 className="dashboard-welcome-nome">{user.nome}</h1>
+                <p className="dashboard-subtitle">
+                  Visão geral do seu negócio: faturamento, DAS e notas fiscais em um só lugar.
+                </p>
+                <div className="dashboard-welcome-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                  <span>Resumo do mês</span>
+                </div>
+              </div>
+            </div>
           </section>
 
           {activeSection === "resumo" && (
           <>
+          <div className="dashboard-resumo-block">
           <section className="dashboard-cards" id="resumo">
-            <div className="dashboard-card">
-              <div className="dashboard-card-header">
+            <article className="dashboard-card dashboard-card-hero">
+              <div className="dashboard-card-accent dashboard-card-accent-pink" />
+              <div className="dashboard-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+              </div>
+              <div className="dashboard-card-body">
                 <span className="pill pill-green">Em dia</span>
                 <h3>Faturamento do mês</h3>
+                {loading ? (
+                  <p className="dashboard-card-value">...</p>
+                ) : (
+                  <p className="dashboard-card-value">{formatBrl(faturamento)}</p>
+                )}
+                <p className="dashboard-card-meta">
+                  Receitas em {mesAtual()}. Adicione lançamentos para atualizar.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm dashboard-card-btn"
+                  onClick={() => setShowAddReceita(true)}
+                >
+                  + Adicionar receita
+                </button>
               </div>
-              {loading ? (
-                <p className="dashboard-card-value">...</p>
-              ) : (
-                <p className="dashboard-card-value">{formatBrl(faturamento)}</p>
-              )}
-              <p className="dashboard-card-meta">
-                Receitas em {mesAtual()}. Adicione lançamentos para atualizar.
-              </p>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm dashboard-card-btn"
-                onClick={() => setShowAddReceita(true)}
-              >
-                + Adicionar receita
-              </button>
-            </div>
+            </article>
 
-            <div className="dashboard-card">
-              <div className="dashboard-card-header">
+            <article className="dashboard-card dashboard-card-das">
+              <div className="dashboard-card-accent dashboard-card-accent-purple" />
+              <div className="dashboard-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </div>
+              <div className="dashboard-card-body">
                 <span className={`pill ${dasInfo?.status === "Vencido" ? "pill-pending" : "pill-green"}`}>
                   {dasInfo?.status ?? "Próximo"}
                 </span>
                 <h3>DAS e obrigações</h3>
+                {loading ? (
+                  <p className="dashboard-card-value">...</p>
+                ) : dasInfo ? (
+                  <>
+                    <p className="dashboard-card-value">{formatBrl(dasInfo.valor)}</p>
+                    <p className="dashboard-card-meta">
+                      {dasInfo.label} — Vencimento: {dasInfo.vencimento} de cada mês
+                    </p>
+                    <details className="dashboard-details">
+                      <summary>Ver obrigações</summary>
+                      <ul className="dashboard-obrigacoes">
+                        {dasInfo.obrigacoes.map((o) => (
+                          <li key={o.id}>
+                            <strong>{o.nome}</strong>: {o.periodicidade} — {o.vencimento}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  </>
+                ) : (
+                  <>
+                    <p className="dashboard-card-value">{formatBrl(DAS_MEI_2025.servicos.valor)}</p>
+                    <p className="dashboard-card-meta">Prestação de Serviços (padrão). Configure em Configurações.</p>
+                  </>
+                )}
               </div>
-              {loading ? (
-                <p className="dashboard-card-value">...</p>
-              ) : dasInfo ? (
-                <>
-                  <p className="dashboard-card-value">{formatBrl(dasInfo.valor)}</p>
-                  <p className="dashboard-card-meta">
-                    {dasInfo.label} — Vencimento: {dasInfo.vencimento} de cada mês
-                  </p>
-                  <details className="dashboard-details">
-                    <summary>Ver obrigações</summary>
-                    <ul className="dashboard-obrigacoes">
-                      {dasInfo.obrigacoes.map((o) => (
-                        <li key={o.id}>
-                          <strong>{o.nome}</strong>: {o.periodicidade} — {o.vencimento}
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                </>
-              ) : (
-                <>
-                  <p className="dashboard-card-value">{formatBrl(DAS_MEI_2025.servicos.valor)}</p>
-                  <p className="dashboard-card-meta">Prestação de Serviços (padrão). Configure em Configurações.</p>
-                </>
-              )}
-            </div>
+            </article>
 
-            <div className="dashboard-card">
-              <div className="dashboard-card-header">
-                <span className="pill pill-soft">Emitidas</span>
-                <h3>Notas fiscais</h3>
+            <article className="dashboard-card dashboard-card-notas">
+              <div className="dashboard-card-accent dashboard-card-accent-amber" />
+              <div className="dashboard-card-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
               </div>
-              {loading ? (
-                <p className="dashboard-card-value">...</p>
-              ) : (
-                <p className="dashboard-card-value">{notas.length}</p>
-              )}
-              <p className="dashboard-card-meta">
-                Total: {formatBrl(totalNotas)} em {notas.length} nota(s)
-              </p>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm dashboard-card-btn"
-                onClick={() => setShowAddNota(true)}
-              >
-                + Registrar nota
-              </button>
-            </div>
+              <div className="dashboard-card-body">
+                <span className="pill pill-emitidas">Emitidas</span>
+                <h3>Notas fiscais</h3>
+                {loading ? (
+                  <p className="dashboard-card-value">...</p>
+                ) : (
+                  <p className="dashboard-card-value">{notas.length}</p>
+                )}
+                <p className="dashboard-card-meta">
+                  Total: {formatBrl(totalNotas)} em {notas.length} nota(s)
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm dashboard-card-btn"
+                  onClick={() => setShowAddNota(true)}
+                >
+                  + Registrar nota
+                </button>
+              </div>
+            </article>
           </section>
 
           {notas.length > 0 && (
             <section className="dashboard-notas">
-              <h2>Últimas notas emitidas</h2>
-              <div className="dashboard-notas-list">
+              <div className="dashboard-notas-header">
+                <span className="dashboard-notas-icon" aria-hidden>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                </span>
+                <h2>Últimas notas emitidas</h2>
+                <p className="dashboard-notas-sub">Suas notas mais recentes</p>
+              </div>
+              <div className="dashboard-notas-grid">
                 {notas.slice(0, 5).map((n) => (
-                  <div key={n.id} className="dashboard-nota-item">
-                    <span>{n.numero || "—"}</span>
-                    <span>{n.descricao || "Sem descrição"}</span>
-                    <span className="num">{formatBrl(n.valor)}</span>
-                  </div>
+                  <article key={n.id} className="dashboard-nota-card">
+                    <div className="dashboard-nota-card-accent" />
+                    <div className="dashboard-nota-card-body">
+                      <span className="dashboard-nota-tipo">{n.tipo || "NFC-e"}</span>
+                      <h4 className="dashboard-nota-numero">{n.numero || "—"}</h4>
+                      <p className="dashboard-nota-desc">{n.descricao || "Sem descrição"}</p>
+                      <div className="dashboard-nota-footer">
+                        <span className="dashboard-nota-data">{formatDataBr(n.data_emissao)}</span>
+                        <span className="dashboard-nota-valor">{formatBrl(n.valor)}</span>
+                      </div>
+                    </div>
+                  </article>
                 ))}
               </div>
             </section>
           )}
 
           <section className="dashboard-actions">
-            <h2>Acesso rápido</h2>
+            <div className="dashboard-actions-header">
+              <span className="dashboard-actions-icon" aria-hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </span>
+              <div>
+                <h2 className="dashboard-actions-title">Acesso rápido</h2>
+                <p className="dashboard-actions-sub">Atalhos para as principais funções</p>
+              </div>
+            </div>
             <div className="dashboard-actions-grid">
               <button
                 type="button"
-                className="dashboard-action-card"
+                className="dashboard-action-card dashboard-action-card-1"
                 onClick={() => setActiveSection("financeiro")}
               >
-                <span className="dashboard-action-icon">📊</span>
-                <span>Painel Financeiro</span>
+                <span className="dashboard-action-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 14v4" />
+                    <path d="M12 10v8" />
+                    <path d="M17 6v12" />
+                  </svg>
+                </span>
+                <span className="dashboard-action-label">Painel Financeiro</span>
+                <span className="dashboard-action-hint">Receitas e despesas</span>
+                <span className="dashboard-action-arrow" aria-hidden>→</span>
               </button>
               <button
                 type="button"
-                className="dashboard-action-card"
+                className="dashboard-action-card dashboard-action-card-2"
                 onClick={() => setActiveSection("precificacao")}
               >
-                <span className="dashboard-action-icon">💰</span>
-                <span>Precificação</span>
+                <span className="dashboard-action-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                </span>
+                <span className="dashboard-action-label">Precificação</span>
+                <span className="dashboard-action-hint">Calcule seus preços</span>
+                <span className="dashboard-action-arrow" aria-hidden>→</span>
               </button>
               <button
                 type="button"
-                className="dashboard-action-card"
+                className="dashboard-action-card dashboard-action-card-3"
                 onClick={() => setActiveSection("financeiro")}
               >
-                <span className="dashboard-action-icon">📝</span>
-                <span>Lançamentos</span>
+                <span className="dashboard-action-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                </span>
+                <span className="dashboard-action-label">Lançamentos</span>
+                <span className="dashboard-action-hint">Registre entradas e saídas</span>
+                <span className="dashboard-action-arrow" aria-hidden>→</span>
               </button>
               <button
                 type="button"
-                className="dashboard-action-card"
+                className="dashboard-action-card dashboard-action-card-4"
                 onClick={() => setActiveSection("configuracoes")}
               >
-                <span className="dashboard-action-icon">⚙️</span>
-                <span>Configurações</span>
+                <span className="dashboard-action-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                </span>
+                <span className="dashboard-action-label">Configurações</span>
+                <span className="dashboard-action-hint">Perfil e preferências</span>
+                <span className="dashboard-action-arrow" aria-hidden>→</span>
               </button>
             </div>
           </section>
+          </div>
           </>
           )}
 
@@ -323,10 +451,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
           )}
 
           {activeSection === "configuracoes" && (
-            <section className="dashboard-section">
-              <h2 className="dashboard-section-title">Configurações</h2>
-              <p className="pricing-meta">Em breve: configurações do MEI.</p>
-            </section>
+            <DashboardConfiguracoes user={user} onProfileUpdate={onProfileUpdate} />
           )}
         </div>
       </main>
