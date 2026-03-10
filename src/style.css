@@ -379,6 +379,11 @@ a:hover {
   color: #fff;
 }
 
+.pill-pending {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
 .hero-card-body {
   display: flex;
   flex-direction: column;
@@ -830,6 +835,222 @@ a:hover {
   margin: 0;
   font-size: 0.95rem;
   color: rgba(253, 242, 248, 0.88);
+}
+
+/* Dashboard — tela do usuário logado */
+.dashboard-page .dashboard-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 0.9rem;
+  color: rgba(253, 242, 248, 0.75);
+}
+
+.dashboard-nav .nav-link {
+  padding: 0.2rem 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.dashboard-nav .nav-link:hover {
+  text-decoration: none;
+}
+
+.dashboard-nav .nav-link:hover,
+.dashboard-nav .nav-link.active {
+  color: rgba(253, 242, 248, 0.98);
+}
+
+.dashboard-main {
+  flex: 1;
+  padding-block: 2rem 3rem;
+}
+
+.dashboard-section {
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-section-title {
+  margin: 0 0 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fdf2f8;
+}
+
+.dashboard-welcome {
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-welcome h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 2vw, 1.9rem);
+  font-weight: 600;
+  color: #fdf2f8;
+}
+
+.dashboard-subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(253, 242, 248, 0.8);
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-card {
+  padding: 1.25rem 1.4rem;
+  border-radius: 1rem;
+  background: radial-gradient(
+    circle at top left,
+    rgba(236, 72, 153, 0.1),
+    rgba(20, 8, 22, 0.98)
+  );
+  border: 1px solid rgba(236, 72, 153, 0.15);
+}
+
+.dashboard-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.dashboard-card-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(253, 242, 248, 0.9);
+}
+
+.dashboard-card-value {
+  margin: 0 0 0.25rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #f472b6;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-card-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(216, 180, 220, 0.8);
+}
+
+.dashboard-card-btn {
+  margin-top: 0.75rem;
+}
+
+.dashboard-details {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.dashboard-details summary {
+  cursor: pointer;
+  color: rgba(216, 180, 220, 0.9);
+}
+
+.dashboard-obrigacoes {
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.dashboard-obrigacoes li {
+  margin-bottom: 0.25rem;
+  color: rgba(253, 242, 248, 0.85);
+}
+
+.dashboard-notas {
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-notas h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: rgba(253, 242, 248, 0.9);
+}
+
+.dashboard-notas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dashboard-nota-item {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: 1rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(236, 72, 153, 0.06);
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba(253, 242, 248, 0.9);
+}
+
+.dashboard-nota-item .num {
+  font-variant-numeric: tabular-nums;
+  color: #f472b6;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+.dashboard-actions h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: rgba(253, 242, 248, 0.9);
+}
+
+.dashboard-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.dashboard-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(236, 72, 153, 0.08);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  color: rgba(253, 242, 248, 0.9);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
+  cursor: pointer;
+  font-family: inherit;
+  margin: 0;
+}
+
+.dashboard-action-card:hover {
+  background: rgba(236, 72, 153, 0.15);
+  border-color: rgba(236, 72, 153, 0.35);
+}
+
+.dashboard-action-icon {
+  font-size: 1.5rem;
 }
 
 .site-footer {
@@ -1425,7 +1646,8 @@ a:hover {
     justify-content: space-between;
   }
 
-  .nav {
+  .nav,
+  .dashboard-nav {
     display: none;
   }
 

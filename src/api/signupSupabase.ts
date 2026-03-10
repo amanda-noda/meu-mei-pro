@@ -66,10 +66,15 @@ export async function signUpWithSupabase(
     };
   }
 
+  const u = data?.user;
+  if (!u) {
+    return { ok: false, message: "Não foi possível criar a conta." };
+  }
+
   const appUser: AppUser = {
-    id: data.user.id,
-    email: data.user.email ?? "",
-    nome: (data.user.user_metadata?.full_name as string) || data.user.email?.split("@")[0] || "Usuário",
+    id: u.id,
+    email: u.email ?? "",
+    nome: (u.user_metadata?.full_name as string) || u.email?.split("@")[0] || "Usuário",
   };
   return {
     ok: true,

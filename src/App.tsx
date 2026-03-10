@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { signUpWithSupabase, signInWithSupabase, type AppUser } from "./api/signupSupabase";
 import { supabase } from "./lib/supabase";
+import { Dashboard } from "./components/Dashboard";
 
 const BENEFITS_USE_LIMIT = 3;
 const BENEFITS_STORAGE_KEY = "meu-mei-pro-benefits-uses";
@@ -415,7 +416,6 @@ export const App: React.FC = () => {
             setShowSignupModal(false);
             setSignupSuccess(false);
             setSignupForm({ nome: "", email: "", senha: "" });
-            document.getElementById("precificacao")?.scrollIntoView({ behavior: "smooth" });
           }, 1500);
         } else if (result.user) {
           setSignupSuccess(true);
@@ -452,7 +452,6 @@ export const App: React.FC = () => {
         setUser(result.user);
         setShowLoginModal(false);
         setLoginForm({ email: "", senha: "" });
-        document.getElementById("precificacao")?.scrollIntoView({ behavior: "smooth" });
       } else {
         setLoginError(result.message);
       }
@@ -468,6 +467,10 @@ export const App: React.FC = () => {
       setLoginForm({ email: "", senha: "" });
     }
   };
+
+  if (user) {
+    return <Dashboard user={user} onLogout={handleLogout} />;
+  }
 
   return (
     <div className="page">
@@ -488,19 +491,7 @@ export const App: React.FC = () => {
               <a href="#planos">Planos</a>
               <a href="#faq">Dúvidas</a>
             </nav>
-            {user ? (
-              <div className="header-user">
-                <span className="header-greeting">Olá, {user.nome}</span>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm header-logout"
-                  onClick={handleLogout}
-                >
-                  Sair
-                </button>
-              </div>
-            ) : (
-              <div className="header-auth-buttons">
+            <div className="header-auth-buttons">
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm header-login"
@@ -516,7 +507,6 @@ export const App: React.FC = () => {
                   Começar agora
                 </button>
               </div>
-            )}
           </div>
         </div>
       </header>
@@ -1209,35 +1199,41 @@ export const App: React.FC = () => {
                     <tbody>
                       <tr className="row-group"><td colSpan={14} className="group-label">RECEITAS</td></tr>
                       {[
-                        ["Receita Produtos", receitaProdutos, setReceitaProdutos, false],
-                        ["Receita Serviços", receitaServicos, setReceitaServicos, false],
-                      ].map(([label, arr, setter, neg]) => (
+                        ["Receita Produtos", receitaProdutos, setReceitaProdutos],
+                        ["Receita Serviços", receitaServicos, setReceitaServicos],
+                      ].map((row) => {
+                        const [label, arr, setter] = row as [string, number[], React.Dispatch<React.SetStateAction<number[]>>];
+                        return (
                         <tr key={String(label)}>
                           <td>{label}</td>
-                          <td className="num">{fmt(sum(arr as number[]))}</td>
-                          {(arr as number[]).map((v, i) => (
+                          <td className="num">{fmt(sum(arr))}</td>
+                          {arr.map((v, i) => (
                             <td key={i} className="num">
                               <input type="number" className="pricing-input pricing-input-cell" step={0.01} min={0} value={v || ""} onChange={(e) => updateMes(setter as React.Dispatch<React.SetStateAction<number[]>>, i, parseFloat(e.target.value) || 0)} />
                             </td>
                           ))}
                         </tr>
-                      ))}
+                        );
+                      })}
                       <tr className="highlight"><td>Receita Total</td><td className="num positive">{fmt(painelTotais.acumuladoReceita)}</td>{painelTotais.receitaTotalMes.map((v, i) => <td key={i} className="num positive">{fmt(v)}</td>)}</tr>
                       <tr className="row-group"><td colSpan={14} className="group-label">CUSTO VENDA</td></tr>
                       {[
-                        ["CMV", cmv, setCmv, true],
-                        ["Comissões", comissoes, setComissoes, true],
-                      ].map(([label, arr, setter]) => (
+                        ["CMV", cmv, setCmv],
+                        ["Comissões", comissoes, setComissoes],
+                      ].map((row) => {
+                        const [label, arr, setter] = row as [string, number[], React.Dispatch<React.SetStateAction<number[]>>];
+                        return (
                         <tr key={String(label)}>
                           <td>{label}</td>
-                          <td className="num negative">({fmt(sum(arr as number[]))})</td>
-                          {(arr as number[]).map((v, i) => (
+                          <td className="num negative">({fmt(sum(arr))})</td>
+                          {arr.map((v, i) => (
                             <td key={i} className="num">
                               <input type="number" className="pricing-input pricing-input-cell" step={0.01} min={0} value={v || ""} onChange={(e) => updateMes(setter as React.Dispatch<React.SetStateAction<number[]>>, i, parseFloat(e.target.value) || 0)} />
                             </td>
                           ))}
                         </tr>
-                      ))}
+                        );
+                      })}
                       <tr className="highlight"><td>CUSTO VENDA</td><td className="num negative">({fmt(painelTotais.acumuladoCustoVenda)})</td>{painelTotais.custoVendaMes.map((v, i) => <td key={i} className="num negative">({fmt(v)})</td>)}</tr>
                       <tr className="row-group"><td colSpan={14} className="group-label">DESPESAS FIXAS</td></tr>
                       {[
@@ -1246,50 +1242,59 @@ export const App: React.FC = () => {
                         ["Luz", luz, setLuz],
                         ["Contabilidade", contabilidade, setContabilidade],
                         ["Impostos", impostos, setImpostos],
-                      ].map(([label, arr, setter]) => (
+                      ].map((row) => {
+                        const [label, arr, setter] = row as [string, number[], React.Dispatch<React.SetStateAction<number[]>>];
+                        return (
                         <tr key={String(label)}>
                           <td>{label}</td>
-                          <td className="num negative">({fmt(sum(arr as number[]))})</td>
-                          {(arr as number[]).map((v, i) => (
+                          <td className="num negative">({fmt(sum(arr))})</td>
+                          {arr.map((v, i) => (
                             <td key={i} className="num">
                               <input type="number" className="pricing-input pricing-input-cell" step={0.01} min={0} value={v || ""} onChange={(e) => updateMes(setter as React.Dispatch<React.SetStateAction<number[]>>, i, parseFloat(e.target.value) || 0)} />
                             </td>
                           ))}
                         </tr>
-                      ))}
+                        );
+                      })}
                       <tr className="highlight"><td>DESPESAS FIXAS</td><td className="num negative">({fmt(painelTotais.acumuladoDespesasFixas)})</td>{painelTotais.despesasFixasMes.map((v, i) => <td key={i} className="num negative">({fmt(v)})</td>)}</tr>
                       <tr className="row-group"><td colSpan={14} className="group-label">DESPESAS VARIÁVEIS</td></tr>
                       {[
                         ["Software", software, setSoftware],
                         ["Internet", internet, setInternet],
                         ["Telefone", telefone, setTelefone],
-                      ].map(([label, arr, setter]) => (
+                      ].map((row) => {
+                        const [label, arr, setter] = row as [string, number[], React.Dispatch<React.SetStateAction<number[]>>];
+                        return (
                         <tr key={String(label)}>
                           <td>{label}</td>
-                          <td className="num negative">({fmt(sum(arr as number[]))})</td>
-                          {(arr as number[]).map((v, i) => (
+                          <td className="num negative">({fmt(sum(arr))})</td>
+                          {arr.map((v, i) => (
                             <td key={i} className="num">
                               <input type="number" className="pricing-input pricing-input-cell" step={0.01} min={0} value={v || ""} onChange={(e) => updateMes(setter as React.Dispatch<React.SetStateAction<number[]>>, i, parseFloat(e.target.value) || 0)} />
                             </td>
                           ))}
                         </tr>
-                      ))}
+                        );
+                      })}
                       <tr className="highlight"><td>DESPESAS VARIÁVEIS</td><td className="num negative">({fmt(painelTotais.acumuladoDespesasVar)})</td>{painelTotais.despesasVarMes.map((v, i) => <td key={i} className="num negative">({fmt(v)})</td>)}</tr>
                       <tr className="row-group"><td colSpan={14} className="group-label">DESPESAS OUTRAS</td></tr>
                       {[
                         ["Empréstimos", emprestimos, setEmprestimos],
                         ["Retiradas", retiradas, setRetiradas],
-                      ].map(([label, arr, setter]) => (
+                      ].map((row) => {
+                        const [label, arr, setter] = row as [string, number[], React.Dispatch<React.SetStateAction<number[]>>];
+                        return (
                         <tr key={String(label)}>
                           <td>{label}</td>
-                          <td className="num negative">({fmt(sum(arr as number[]))})</td>
-                          {(arr as number[]).map((v, i) => (
+                          <td className="num negative">({fmt(sum(arr))})</td>
+                          {arr.map((v, i) => (
                             <td key={i} className="num">
                               <input type="number" className="pricing-input pricing-input-cell" step={0.01} min={0} value={v || ""} onChange={(e) => updateMes(setter as React.Dispatch<React.SetStateAction<number[]>>, i, parseFloat(e.target.value) || 0)} />
                             </td>
                           ))}
                         </tr>
-                      ))}
+                        );
+                      })}
                       <tr className="highlight"><td>DESPESAS OUTRAS</td><td className="num negative">({fmt(painelTotais.acumuladoDespesasOutras)})</td>{painelTotais.despesasOutrasMes.map((v, i) => <td key={i} className="num negative">({fmt(v)})</td>)}</tr>
                       <tr className="total"><td>Total Receita</td><td className="num positive">{fmt(painelTotais.totalReceita)}</td><td colSpan={12}></td></tr>
                       <tr className="total"><td>Total Despesas</td><td className="num negative">({fmt(painelTotais.totalDespesas)})</td><td colSpan={12}></td></tr>
